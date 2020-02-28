@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="card mt-3">
+    <div class="card-header">
+        Ticket {{ ticket.id }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            <p>{{ ticket.status }}</p>
+        </h5>
+        <p class="card-text">{{ ticket.timestamp }}</p>
+    </div>
+</div>
+<div>
+    <a href="/" class="btn btn-light mt-2">Back</a>
+</div>
+{% endblock %}

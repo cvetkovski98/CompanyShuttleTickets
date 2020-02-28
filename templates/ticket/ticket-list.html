@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-8">
+        {% for ticket in tickets %}
+        <div class="card mt-3">
+            <div class="card-header">
+                Ticket {{ ticket.id }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <p>{{ ticket.status }}</p>
+                </h5>
+                <p class="card-text">{{ ticket.timestamp }}</p>
+                <a href="/tickets/{{ticket.id}}" class="btn btn-primary">View </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-4">
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Filter tickets</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
