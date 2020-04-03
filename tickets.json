@@ -1,62 +1,17 @@
 [
     {
-        "id":1,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":2,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":3,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":4,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":5,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":6,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":7,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":8,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":9,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":10,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":11,
-        "status":"none",
-        "timestamp":"27.02.2020"
-    },
-    {
-        "id":12,
-        "status":"none",
-        "timestamp":"27.02.2020"
+        "id":"12bsacx41sda12421mc",
+        "title":"First Ticket",
+        "content":"Some content for the first ticket",
+        "timestamp":"2020-03-02",
+        "status":"new",
+        "created_by": "cckli2edssda12421mc",
+        "comments":[
+            {
+                "timestamp":"2020-03-02",
+                "written_by":"cckli2edssda12421mc",
+                "content":"This is the first comment on the first post"
+            }
+        ]
     }
 ]

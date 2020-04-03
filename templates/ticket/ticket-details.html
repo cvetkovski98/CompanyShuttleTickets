@@ -16,4 +16,17 @@
 <div>
     <a href="/" class="btn btn-light mt-2">Back</a>
 </div>
+<div class="mt-4">
+    <h3>Discussion</h3>
+    <hr>
+    {% for message in discussion %}
+        <div>
+            {{ message.value }}
+        </div>
+    {% endfor %}
+    <form method="POST" action="/conversations">
+        <input type="hidden" value="{{ticket.id}}" name="ticketId">
+        <input name='value' placeholder="Type a message" class="form-control">
+    </form>
+</div>
 {% endblock %}

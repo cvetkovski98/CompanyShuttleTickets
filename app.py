@@ -1,44 +1,38 @@
-from flask import Flask, render_template, request, redirect
 import json
-import pymongo
+
+import mongoengine as db
+from mongoengine_goodjson import *
+from flask import Flask, Response, request, jsonify
+from flask_cors import CORS
+
+from models import Comment, Ticket, User
 
 app = Flask(__name__)
+# allow requests from client app
+db.connect(db='CompanyShuttleDb', host='localhost', port=27017)
+# creating api routes for the angular client
 
-with open('tickets.json') as json_file:
-    data = json.load(json_file)
+cors = CORS(app)
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-mydb = myclient["CompanyShuttleDb"]
-mycol = mydb["tickets"]
 
-@app.route('/', methods = ['GET'])
-def index():
-    data = mycol.find()
-    return render_template('ticket/ticket-list.html', tickets = data)
+@app.route('/api/tickets', methods=['GET'])
+def get_all_tickets():
+    data = [json.loads(ticket.to_json(follow_reference=True)) for ticket in Ticket.objects()]
+    return jsonify(data)
 
-@app.route('/tickets/<int:id>', methods = ['GET'])
-def get_ticket(id):
-    query = {
-        "id": id
-    }
-    tic = mycol.find_one(query)
-    return render_template('ticket/ticket-details.html', ticket = tic)
 
-@app.route('/tickets', methods = ['POST'])
-def add_ticket():
-    body = request.get_json()
-    mycol.insert_one(body)
-    return redirect('/')
+@app.route('/api/tickets/<string:ticket_id>', methods=['GET'])
+def get_ticket(ticket_id):
+    data = Ticket.objects(id=ticket_id).get()
+    return jsonify(json.loads(data.to_json(follow_reference=True)))
 
-@app.route('/tickets/<int:id>', methods = ['DELETE'])
-def delete_ticket(id):
-    query = {
-        "id": id
-    }
-    mycol.delete_one(query)
-    return redirect('/')
 
+@app.route('/api/tickets/create', methods=['POST'])
+def create_ticket():
+    Ticket.from_json(json.dumps(request.get_json())).save()
+    return Response(status=200,
+                    mimetype="application/json")
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug='true')
+    app.run(port=5000, debug=True)
