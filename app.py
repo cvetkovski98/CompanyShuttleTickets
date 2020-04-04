@@ -61,7 +61,7 @@ def add_comment(ticket_id):
     t.assignee = c.assignee
     t.save()
     user_dict = json.loads(t.created_by.to_json())
-    receivers = ['cvetkovski98@gmail.com']
+    receivers = ['cvetkovski98@gmail.com', 'stboki77@gmail.com']
     message_text = user_dict['name'] + " " + user_dict[
         'surname'] + " just commented on " + t.title + " and updated status to " + t.status
     title = "[" + t.title + "] Comment added"
@@ -73,10 +73,22 @@ def add_comment(ticket_id):
 def create_ticket():
     receiving_dict = request.get_json()
     if receiving_dict['assignee'] is None:
-        receiving_dict['assignee'] = 'None'
-    t = Ticket().from_json(json.dumps(receiving_dict))
+        receiving_dict['assignee'] = None
+    t = Ticket(
+        id=receiving_dict['id'],
+        title=receiving_dict['title'],
+        content=receiving_dict['content'],
+        timestamp=receiving_dict['timestamp'],
+        status=receiving_dict['status'],
+        created_by=receiving_dict['created_by'],
+        comments=receiving_dict['comments'],
+        assignee=receiving_dict['assignee']
+    )
+    # t.assignee = None
+    print(t)
+    t.save(cascade=False)
     user_dict = json.loads(t.created_by.to_json())
-    receivers = ['cvetkovski98@gmail.com']
+    receivers = ['cvetkovski98@gmail.com', 'stboki77@gmail.com']
     message_text = user_dict['name'] + " " + user_dict[
         'surname'] + " created a new ticket with title " + t.title + " and status " + t.status
     send_mail_async(receivers, 'Ticket created', message_text)
