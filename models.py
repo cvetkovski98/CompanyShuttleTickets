@@ -34,4 +34,4 @@ class Ticket(gj.Document):
     status = db.StringField(required=True, max_length=100)
     created_by = db.ReferenceField(User, reverse_delete_rule=db.NULLIFY)
     comments = db.EmbeddedDocumentListField(Comment)
-    assignee = gj.FollowReferenceField(User, required=False, default=None)
+    assignee = db.ReferenceField(User, required=False)

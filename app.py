@@ -1,12 +1,13 @@
 import json
 
 import mongoengine as db
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, copy_current_request_context
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
 from flask_bcrypt import Bcrypt
-
+from flask_mail import Mail, Message
 from models import Ticket, User, Comment
+import threading
 
 app = Flask(__name__)
 db.connect(db='CompanyShuttleDb', host='localhost', port=27017)
@@ -15,6 +16,18 @@ bcrypt = Bcrypt(app)
 app.config['JWT_SECRET_KEY'] = 'secret'
 
 cors = CORS(app)
+# email setup
+app.config["MAIL_SERVER"] = 'smtp.gmail.com'
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = 'companyshuttleapp@gmail.com'
+app.config["MAIL_PASSWORD"] = '8yK-7A_:>2BHBvv~'
+app.config["MAIL_DEFAULT_SENDER"] = 'companyshuttleapp@gmail.com'
+app.config["MAIL_MAX_EMAILS"] = None
+app.config["MAIL_ASCII_ATTACHMENTS"] = False
+
+mail = Mail(app)
 
 
 @app.route('/api/tickets', methods=['GET'])
@@ -47,12 +60,26 @@ def add_comment(ticket_id):
     t.status = c.statusChangedTo
     t.assignee = c.assignee
     t.save()
+    user_dict = json.loads(t.created_by.to_json())
+    receivers = ['cvetkovski98@gmail.com']
+    message_text = user_dict['name'] + " " + user_dict[
+        'surname'] + " just commented on " + t.title + " and updated status to " + t.status
+    title = "[" + t.title + "] Comment added"
+    send_mail_async(receivers, title, message_text)
     return jsonify(json.loads(c.to_json()))
 
 
 @app.route('/api/tickets/create', methods=['POST'])
 def create_ticket():
-    Ticket.from_json(json.dumps(request.get_json())).save()
+    receiving_dict = request.get_json()
+    if receiving_dict['assignee'] is None:
+        receiving_dict['assignee'] = 'None'
+    t = Ticket().from_json(json.dumps(receiving_dict))
+    user_dict = json.loads(t.created_by.to_json())
+    receivers = ['cvetkovski98@gmail.com']
+    message_text = user_dict['name'] + " " + user_dict[
+        'surname'] + " created a new ticket with title " + t.title + " and status " + t.status
+    send_mail_async(receivers, 'Ticket created', message_text)
     return Response(status=200,
                     mimetype='application/json')
 
@@ -86,6 +113,28 @@ def login():
         return jsonify({'token': access_token})
     else:
         return jsonify({"error": "wrong"})
+
+
+def send_mail_async(receiver, subject, body, sender=None):
+    """
+
+    :param receiver: list of emails to send message to
+    :param subject: the subject of the email
+    :param body: the body of the email
+    :param sender: (optional) who sends the mail
+    :return:
+    """
+    if sender is None:
+        sender = app.config['MAIL_DEFAULT_SENDER']
+
+    message = Message(subject=subject, recipients=receiver, body=body, sender=sender)
+
+    @copy_current_request_context
+    def send_message(m):
+        mail.send(m)
+
+    sender = threading.Thread(name='mail_sender', target=send_message, args=(message,))
+    sender.start()
 
 
 if __name__ == '__main__':
