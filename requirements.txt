@@ -1,9 +1,14 @@
 astroid==2.3.3
 autopep8==1.5
+bcrypt==3.1.7
+cffi==1.14.0
 Click==7.0
 dateutils==0.6.8
 Flask==1.1.1
+Flask-Bcrypt==0.7.1
 Flask-Cors==3.0.8
+Flask-JWT==0.3.2
+Flask-JWT-Extended==3.24.1
 isort==4.3.21
 itsdangerous==1.1.0
 Jinja2==2.11.1
@@ -13,6 +18,8 @@ mccabe==0.6.1
 mongoengine==0.19.1
 mongoengine-goodjson==1.1.8
 pycodestyle==2.5.0
+pycparser==2.20
+PyJWT==1.7.1
 pylint==2.4.4
 pymongo==3.10.1
 python-dateutil==2.8.1
